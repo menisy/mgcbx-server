@@ -1,6 +1,21 @@
-const io = require('socket.io')();
+'use strict';
+
+const express = require('express');
+const socketIO = require('socket.io');
+const path = require('path');
+
+const PORT = process.env.PORT || 3000;
+const INDEX = path.join(__dirname, 'index.html');
+
+const server = express()
+  .use((req, res) => res.sendFile(INDEX) )
+  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+
+const io = socketIO(server);
+
 
 var position = {x: 0, y: 0}
+
 
 io.on('connection', (client) => {
   client.on('subscribeToView', () => {
@@ -21,8 +36,3 @@ io.on('connection', (client) => {
     position.y = pos.y;
   });
 });
-
-
-const port = 80;
-io.listen(port);
-console.log('listening on port ', port);
